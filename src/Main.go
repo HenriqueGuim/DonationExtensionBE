@@ -12,7 +12,9 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 
-	obtainCheckoutController(router)
+	StripeCheckoutController(router)
+	StreamLabsRedirectAutorize(router)
+	StreamLabsGetTokens(router)
 
 	router.Use(cors.New(config))
 	err := router.Run(":8080")

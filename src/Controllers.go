@@ -1,7 +1,18 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"DonationBE/src/services"
+	"github.com/gin-gonic/gin"
+)
 
-func obtainCheckoutController(router *gin.Engine) {
-	router.POST("/createCheckout", createCheckout)
+func StripeCheckoutController(router *gin.Engine) {
+	router.POST("/createCheckout", services.CreateCheckout)
+}
+
+func StreamLabsRedirectAutorize(router *gin.Engine) {
+	router.GET("/streamlabs/authorize", services.AuthorizeStreamLabs)
+}
+
+func StreamLabsGetTokens(router *gin.Engine) {
+	router.GET("/streamlabs/token", services.GetTokens)
 }

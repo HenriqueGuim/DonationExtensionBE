@@ -1,11 +1,11 @@
-package main
+package utils
 
 import (
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/checkout/session"
 )
 
-func createCheckoutSession(amount int, successDomain string, failDomain string, imgUrl string) (*stripe.CheckoutSession, error) {
+func CreateCheckoutSession(amount int, successDomain string, failDomain string, imgUrl string) (*stripe.CheckoutSession, error) {
 	params := &stripe.CheckoutSessionParams{
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			&stripe.CheckoutSessionLineItemParams{

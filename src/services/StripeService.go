@@ -1,13 +1,15 @@
-package main
+package services
 
 import (
+	"DonationBE/src/models"
+	"DonationBE/src/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/stripe/stripe-go/v76"
 )
 
-func createCheckout(ctx *gin.Context) {
+func CreateCheckout(ctx *gin.Context) {
 
-	var requestBody RequestBody
+	var requestBody models.DonoRequestBody
 
 	if err := ctx.BindJSON(&requestBody); err != nil {
 		println(err.Error())
@@ -15,9 +17,9 @@ func createCheckout(ctx *gin.Context) {
 		return
 	}
 
-	stripe.Key = requestBody.StripeKey
+	stripe.Key = requestBody.StripeToken
 
-	s, err := createCheckoutSession(requestBody.Amount*100, requestBody.SuccessDomain, requestBody.FailDomain, requestBody.ImgUrl)
+	s, err := utils.CreateCheckoutSession(requestBody.Amount*100, requestBody.SuccessDomain, requestBody.FailDomain, requestBody.ImgUrl)
 
 	if err != nil {
 		println(err.Error())
