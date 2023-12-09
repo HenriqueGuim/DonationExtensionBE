@@ -2,12 +2,17 @@ package services
 
 import (
 	"DonationBE/src/models"
+	repo "DonationBE/src/repositories"
 	"DonationBE/src/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/stripe/stripe-go/v76"
 )
 
-func CreateCheckout(ctx *gin.Context) {
+type StripeService struct {
+	CR *repo.ConfigurationsRepo
+}
+
+func (*StripeService) CreateCheckout(ctx *gin.Context) {
 
 	var requestBody models.DonoRequestBody
 

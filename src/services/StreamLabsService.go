@@ -7,7 +7,10 @@ import (
 	"net/http"
 )
 
-func AuthorizeStreamLabs(ctx *gin.Context) {
+type StreamlabsService struct {
+}
+
+func (*StreamlabsService) AuthorizeStreamLabs(ctx *gin.Context) {
 	responseType := "code"
 	clientId := "6e62955e-2c61-4fe5-acfc-3b9637e33469"
 	redirectUri := "http://localhost:8080/streamlabs/token"
@@ -24,7 +27,7 @@ func AuthorizeStreamLabs(ctx *gin.Context) {
 
 }
 
-func GetTokens(ctx *gin.Context) {
+func (*StreamlabsService) GetTokens(ctx *gin.Context) {
 	code := ctx.Query("code")
 
 	url := "https://streamlabs.com/api/v2.0/token"
