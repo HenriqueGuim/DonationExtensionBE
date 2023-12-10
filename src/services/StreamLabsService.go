@@ -17,7 +17,7 @@ func (*StreamlabsService) AuthorizeStreamLabs(ctx *gin.Context) {
 	clientId := os.Getenv("STREAMLABS_CLIENT_ID")
 	redirectUri := os.Getenv("REDIRECT_URL") + "/streamlabs/token"
 	scope := "donations.create"
-	url := os.Getenv("STREAMLABS_URL") + "/api/v2.0/authorize"
+	url := os.Getenv("STREAMLABS_URL") + "/authorize"
 
 	url += "?client_id=" + clientId
 	url += "&redirect_uri=" + redirectUri
