@@ -35,7 +35,7 @@ func (*StreamlabsService) GetTokens(ctx *gin.Context) {
 	url := os.Getenv("STREAMLABS_URL") + "/token"
 	clientId := os.Getenv("STREAMLABS_CLIENT_ID")
 	clientSecret := os.Getenv("STREAMLABS_CLIENT_SECRET")
-	redirectUri := os.Getenv("STREAMLABS_URL") + "/streamlabs/token"
+	redirectUri := os.Getenv("REDIRECT_URL") + "/streamlabs/token"
 
 	body := strings.NewReader(`
 {
