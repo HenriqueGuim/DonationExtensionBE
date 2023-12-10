@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
+	"strings"
 )
 
 type StreamlabsService struct {
@@ -12,10 +14,10 @@ type StreamlabsService struct {
 
 func (*StreamlabsService) AuthorizeStreamLabs(ctx *gin.Context) {
 	responseType := "code"
-	clientId := "6e62955e-2c61-4fe5-acfc-3b9637e33469"
-	redirectUri := "http://localhost:8080/streamlabs/token"
+	clientId := os.Getenv("STREAMLABS_CLIENT_ID")
+	redirectUri := os.Getenv("REDIRECT_URL") + "/streamlabs/token"
 	scope := "donations.create"
-	url := "https://streamlabs.com/api/v2.0/authorize"
+	url := os.Getenv("STREAMLABS_URL") + "/api/v2.0/authorize"
 
 	url += "?client_id=" + clientId
 	url += "&redirect_uri=" + redirectUri
@@ -30,18 +32,22 @@ func (*StreamlabsService) AuthorizeStreamLabs(ctx *gin.Context) {
 func (*StreamlabsService) GetTokens(ctx *gin.Context) {
 	code := ctx.Query("code")
 
-	url := "https://streamlabs.com/api/v2.0/token"
-	clientId := "6e62955e-2c61-4fe5-acfc-3b9637e33469"
-	clientSecret := "cbooySyWt2Zn5LMemQCFyr3eadfVsIxbJSPea8vN"
-	redirectUri := "http://localhost:8080/"
+	url := os.Getenv("STREAMLABS_URL") + "/token"
+	clientId := os.Getenv("STREAMLABS_CLIENT_ID")
+	clientSecret := os.Getenv("STREAMLABS_CLIENT_SECRET")
+	redirectUri := os.Getenv("STREAMLABS_URL") + "/streamlabs/token"
 
-	url += "?grant_type=authorization_code"
-	url += "&client_id=" + clientId
-	url += "&client_secret=" + clientSecret
-	url += "&redirect_uri=" + redirectUri
-	url += "&code=" + code
+	body := strings.NewReader(`
+{
+	"grant_type": "authorization_code",
+	"client_id": "` + clientId + `",
+	"client_secret": "` + clientSecret + `",
+	"redirect_uri": "` + redirectUri + `",
+	"code": "` + code + `"
+}
+`)
 
-	req, err := http.NewRequest("POST", url, nil)
+	req, err := http.NewRequest("POST", url, body)
 
 	if err != nil {
 		println(err.Error())
@@ -50,17 +56,18 @@ func (*StreamlabsService) GetTokens(ctx *gin.Context) {
 		return
 	}
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Accept", "application/json")
 
 	res, err := http.DefaultClient.Do(req)
 
-	if err != nil {
+	if err != nil || res.StatusCode != 200 {
 		println(err.Error())
 		println("Error doing request")
 		ctx.JSON(500, gin.H{"error": "Internal server error"})
 		return
 	}
 
-	println(res.Status)
+	println("status of request: " + res.Status)
 
 	var resBody models.StreamLabsTokensRequestBody
 
@@ -73,5 +80,19 @@ func (*StreamlabsService) GetTokens(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, resBody)
+	ctx.Data(200, "text/html", []byte(getTokensHTML(resBody)))
+}
+
+func getTokensHTML(tokens models.StreamLabsTokensRequestBody) string {
+	return `
+<html>
+<head>
+<title>Streamlabs tokens</title>
+</head>
+<body>
+<h1>Streamlabs tokens</h1>
+<p>Access token: ` + tokens.AccessToken + `</p>
+<p>Refresh token: ` + tokens.RefreshToken + `</p>
+</body>
+</html>`
 }

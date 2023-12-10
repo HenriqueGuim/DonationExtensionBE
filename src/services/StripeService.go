@@ -12,7 +12,7 @@ type StripeService struct {
 	CR *repo.ConfigurationsRepo
 }
 
-func (*StripeService) CreateCheckout(ctx *gin.Context) {
+func (ss *StripeService) CreateCheckout(ctx *gin.Context) {
 
 	var requestBody models.DonoRequestBody
 
@@ -22,7 +22,15 @@ func (*StripeService) CreateCheckout(ctx *gin.Context) {
 		return
 	}
 
-	stripe.Key = requestBody.StripeToken
+	configs, err := ss.CR.GetConfigurations(requestBody.ChannelId)
+
+	if err != nil {
+		println(err.Error())
+		ctx.JSON(500, gin.H{"error": "Internal server error"})
+		return
+	}
+
+	stripe.Key = configs.StripeToken
 
 	s, err := utils.CreateCheckoutSession(requestBody.Amount*100, requestBody.SuccessDomain, requestBody.FailDomain, requestBody.ImgUrl)
 

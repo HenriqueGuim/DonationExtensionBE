@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"DonationBE/src/models"
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -28,11 +29,11 @@ func NewConfigurationsRepo() ConfigurationsRepo {
 	return ConfigurationsRepo{dB: db}
 }
 
-func (repo *ConfigurationsRepo) GetConfigurations(id int) (int, string, string, string, error) {
+func (repo *ConfigurationsRepo) GetConfigurations(id int) (models.Configs, error) {
 	rows, err := repo.dB.Query("SELECT * FROM configs WHERE channelid = $1", id)
 
 	if err != nil {
-		return 0, "", "", "", err
+		return models.Configs{}, err
 	}
 
 	rows.Next()
@@ -45,15 +46,28 @@ func (repo *ConfigurationsRepo) GetConfigurations(id int) (int, string, string, 
 
 	if err != nil {
 		println(err.Error())
-		return 0, "", "", "", err
+		return models.Configs{}, err
 	}
 
-	return channelId, stripeKey, streamlabsToken, streamlabsRefreshToken, nil
+	config := models.Configs{
+		ChannelId:              channelId,
+		StripeToken:            stripeKey,
+		StreamlabsToken:        streamlabsToken,
+		StreamlabsRefreshToken: streamlabsRefreshToken,
+	}
+
+	return config, nil
 
 }
 
-func (repo *ConfigurationsRepo) PostConfigurations(id int, stripeKey string, streamlabsToken string, streamlabsRefreshToken string) error {
-	_, err := repo.dB.Exec("INSERT INTO configs(channelid, stripekey, streamlabstoken, streamlabsrefreshtoken) VALUES($1, $2, $3, $4)", id, stripeKey, streamlabsToken, streamlabsRefreshToken)
+func (repo *ConfigurationsRepo) PostConfigurations(configs models.Configs) error {
+	_, err := repo.dB.Exec(
+		"INSERT INTO configs(channelid, stripekey, streamlabstoken, streamlabsrefreshtoken) VALUES($1, $2, $3, $4)",
+		configs.ChannelId,
+		configs.StripeToken,
+		configs.StreamlabsToken,
+		configs.StreamlabsRefreshToken,
+	)
 
 	if err != nil {
 		println(err.Error())

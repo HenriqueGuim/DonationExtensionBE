@@ -7,5 +7,5 @@ type DonoRequestBody struct {
 	ImgUrl        string `json:"imgUrl"`
 	SuccessDomain string `json:"successDomain"`
 	FailDomain    string `json:"failDomain"`
-	StripeToken   string `json:"stripeToken"`
+	ChannelId     int    `json:"channelId"`
 }

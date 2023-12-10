@@ -18,14 +18,14 @@ func (cs *ConfigsService) SaveConfigs(ctx *gin.Context) {
 		streamlabsRefreshToken string
 	)
 
-	channelId, stripeToken, streamlabsToken, streamlabsRefreshToken, _ = cs.CR.GetConfigurations(1)
+	configs, _ := cs.CR.GetConfigurations(1)
 
 	if channelId == 0 || stripeToken == "" || streamlabsToken == "" || streamlabsRefreshToken == "" {
 		ctx.JSON(400, gin.H{"error": "Bad request missing parameters"})
 		return
 	}
 
-	err := cs.CR.PostConfigurations(channelId, stripeToken, streamlabsToken, streamlabsRefreshToken)
+	err := cs.CR.PostConfigurations(configs)
 
 	if err != nil {
 		println(err.Error())
@@ -33,6 +33,6 @@ func (cs *ConfigsService) SaveConfigs(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(201, gin.H{"message": "Success"})
+	ctx.JSON(201, gin.H{"message": "Configurations saved successfully"})
 
 }

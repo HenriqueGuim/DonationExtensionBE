@@ -1,6 +1,6 @@
 package models
 
-type configs struct {
+type Configs struct {
 	ChannelId              int
 	StripeToken            string
 	StreamlabsToken        string

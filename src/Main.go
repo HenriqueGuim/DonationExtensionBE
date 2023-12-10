@@ -15,6 +15,7 @@ func main() {
 	StripeCheckoutController(router)
 	StreamLabsRedirectAutorize(router)
 	StreamLabsGetTokens(router)
+	SaveConfigs(router)
 
 	router.Use(cors.New(config))
 	err := router.Run(":8080")
