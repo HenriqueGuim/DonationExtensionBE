@@ -13,10 +13,10 @@ type ConfigurationsRepo struct {
 }
 
 func NewConfigurationsRepo() ConfigurationsRepo {
-	var host = os.Getenv("REPO_CONFIG_HOST")
-	var user = os.Getenv("REPO_CONFIG_USER")
-	var password = os.Getenv("REPO_CONFIG_PASSWORD")
-	var dbName = os.Getenv("REPO_CONFIG_DBNAME")
+	var host = os.Getenv("CONFIG_REPO_HOST")
+	var user = os.Getenv("CONFIG_REPO_USER")
+	var password = os.Getenv("CONFIG_REPO_PASSWORD")
+	var dbName = os.Getenv("CONFIG_REPO_DBNAME")
 
 	connStr := fmt.Sprintf("user='%s' password='%s'  host='%s' dbname='%s'", user, password, host, dbName)
 
@@ -62,7 +62,8 @@ func (repo *ConfigurationsRepo) GetConfigurations(id int) (models.Configs, error
 
 func (repo *ConfigurationsRepo) PostConfigurations(configs models.Configs) error {
 	_, err := repo.dB.Exec(
-		"INSERT INTO configs(channelid, stripekey, streamlabstoken, streamlabsrefreshtoken) VALUES($1, $2, $3, $4)",
+		`INSERT INTO configs(channelid, stripekey, streamlabstoken, streamlabsrefreshtoken) VALUES($1, $2, $3, $4)
+			ON CONFLICT (channelid) DO UPDATE SET stripekey = $2, streamlabstoken = $3, streamlabsrefreshtoken = $4`,
 		configs.ChannelId,
 		configs.StripeToken,
 		configs.StreamlabsToken,

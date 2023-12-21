@@ -1,6 +1,7 @@
 package services
 
 import (
+	"DonationBE/src/models"
 	repo "DonationBE/src/repositories"
 	"github.com/gin-gonic/gin"
 )
@@ -11,21 +12,23 @@ type ConfigsService struct {
 
 func (cs *ConfigsService) SaveConfigs(ctx *gin.Context) {
 
-	var (
-		channelId              int
-		stripeToken            string
-		streamlabsToken        string
-		streamlabsRefreshToken string
-	)
+	var configs models.Configs
 
-	configs, _ := cs.CR.GetConfigurations(1)
+	if err := ctx.BindJSON(&configs); err != nil {
+		println(err.Error())
+		ctx.JSON(400, gin.H{"error": "Bad request binding json"})
+		return
+	}
 
-	if channelId == 0 || stripeToken == "" || streamlabsToken == "" || streamlabsRefreshToken == "" {
+	if configs.ChannelId == 0 || configs.StripeToken == "" || configs.StreamlabsToken == "" || configs.StreamlabsRefreshToken == "" {
 		ctx.JSON(400, gin.H{"error": "Bad request missing parameters"})
 		return
 	}
 
 	err := cs.CR.PostConfigurations(configs)
+
+	ctx.Header("Access-Control-Allow-Origin", "*")
+	ctx.Header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 
 	if err != nil {
 		println(err.Error())
