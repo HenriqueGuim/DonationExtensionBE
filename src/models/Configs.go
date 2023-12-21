@@ -5,4 +5,5 @@ type Configs struct {
 	StripeToken            string `json:"stripeToken"`
 	StreamlabsToken        string `json:"streamlabsToken"`
 	StreamlabsRefreshToken string `json:"streamlabsRefreshToken"`
+	TwitchToken            string `json:"twitchToken"`
 }
