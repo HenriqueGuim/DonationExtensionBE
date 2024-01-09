@@ -5,7 +5,7 @@ import (
 	"github.com/stripe/stripe-go/v76/checkout/session"
 )
 
-func CreateCheckoutSession(amount int, successDomain string, failDomain string, imgUrl string) (*stripe.CheckoutSession, error) {
+func CreateCheckoutSession(amount int64, successDomain string, failDomain string, imgUrl string) (*stripe.CheckoutSession, error) {
 	params := &stripe.CheckoutSessionParams{
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			&stripe.CheckoutSessionLineItemParams{
@@ -17,7 +17,7 @@ func CreateCheckoutSession(amount int, successDomain string, failDomain string, 
 							stripe.String(imgUrl),
 						},
 					},
-					UnitAmount: stripe.Int64(int64(amount)),
+					UnitAmount: stripe.Int64(amount),
 				},
 				Quantity: stripe.Int64(1),
 			},
